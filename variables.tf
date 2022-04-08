@@ -49,3 +49,10 @@ variable "public_subnet" {
   default = "10.0.10.0/24"
 }
 
+variable "server_num" {
+  default = 3
+}
+
+variable "agent_num" {
+  default = 1
+}

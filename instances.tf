@@ -3,14 +3,13 @@ resource "aws_instance" "consul_server" {
 
   ami           = var.ami
   instance_type = "t2.micro"
-  count = 3
+  count = var.server_num
   key_name      = aws_key_pair.opsschool_consul_key.key_name
   subnet_id                   = aws_subnet.public.id
   iam_instance_profile   = aws_iam_instance_profile.consul-join.name
   associate_public_ip_address = true
-
   vpc_security_group_ids = [aws_security_group.opsschool_consul.id]
-  #user_data            = "./run_server.sh" 
+  user_data = templatefile("./consul-server-userdata.tpl", { server_id = count.index +1 })
 
   tags = {
     Name = "consul-server-${count.index}"
@@ -23,12 +22,13 @@ resource "aws_instance" "consul_agent" {
 
   ami           = var.ami
   instance_type = "t2.micro"
+  count = var.agent_num
   key_name      = aws_key_pair.opsschool_consul_key.key_name
   subnet_id                   = aws_subnet.public.id
   associate_public_ip_address = true
   iam_instance_profile   = aws_iam_instance_profile.consul-join.name
   vpc_security_group_ids = [aws_security_group.opsschool_consul.id]
-  user_data            = "./run_agent.sh"  
+  user_data = templatefile("./consul-agent-userdata.tpl", {agent_id = count.index })
 
   tags = {
     Name = "consul-agent-nginx"
