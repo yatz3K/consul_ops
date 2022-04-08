@@ -35,14 +35,6 @@ resource "aws_instance" "consul_agent" {
   }
 
 }
-
-output "server" {
-  value = aws_instance.consul_server.public_ip
-}
-
-output "agent" {
-  value = aws_instance.consul_agent.public_ip
-}
  
 resource "aws_security_group" "opsschool_consul" {
   name        = "opsschool-consul"
@@ -83,8 +75,10 @@ resource "aws_security_group_rule" "all_outbound" {
 
 resource "aws_security_group_rule" "all_inside_security_group" {
   description = "Allow all inside security group"
+  security_group_id = aws_security_group.opsschool_consul.id
   from_port = 0
   to_port = 0
   protocol = "-1"
+  type = "ingress"
   self = true
 }
