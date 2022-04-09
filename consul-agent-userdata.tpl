@@ -1,6 +1,6 @@
 #! /bin/bash
 set -e
-sudo hostnamectl set-hostname server-${agent_id}
+sudo hostnamectl set-hostname agent-${agent_id}
 
 ### set consul version
 CONSUL_VERSION="1.8.5"
@@ -10,8 +10,16 @@ PRIVATE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 
 echo "Installing dependencies..."
 apt-get -qq update &>/dev/null
-apt-get -yqq install zip unzip
 apt-get -yqq install nginx 
+apt-get -yqq install unzip dnsmasq &>/dev/null
+
+echo "Configuring dnsmasq..."
+cat << EODMCF >/etc/dnsmasq.d/10-consul
+# Enable forward lookup of the 'consul' domain:
+server=/consul/127.0.0.1#8600
+EODMCF
+
+systemctl restart dnsmasq
 
 cat << EOF >/etc/systemd/resolved.conf
 [Resolve]

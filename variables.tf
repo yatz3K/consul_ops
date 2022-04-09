@@ -37,8 +37,8 @@ variable "key_name" {
 }
 
 variable "ami" {
-  description = "ami ubuntu 20.04"
-  default = "ami-04505e74c0741db8d"
+  description = "ami ubuntu 18.04"
+  default = "ami-00ddb0e5626798373"
 }
 
 variable "vpc_cidr_block" {
